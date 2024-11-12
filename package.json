@@ -37,5 +37,8 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://zouytarn.github.io/flappy-iqi"
+  "homepage": "https://zouytarn.github.io/flappy-iqi",
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
+  }
 }

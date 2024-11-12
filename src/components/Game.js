@@ -4,8 +4,9 @@ import Pipe, { OBSTACLE_WIDTH } from './Pipe';
 
 const GAME_HEIGHT = 500;
 const GAME_WIDTH = 500;
-const GRAVITY = 6;
-const JUMP_HEIGHT = 65;
+const GRAVITY = 0.2;
+const JUMP_FORCE = -4.7;
+const TERMINAL_VELOCITY = 6;
 const OBSTACLE_GAP = 200;
 const INITIAL_SPEED = 5;
 const SPEED_INCREASE = 1;
@@ -21,6 +22,7 @@ function Game() {
   const [highScore, setHighScore] = useState(0);
   const [speed, setSpeed] = useState(INITIAL_SPEED);
   const [puffs, setPuffs] = useState([]);
+  const [velocity, setVelocity] = useState(0);
 
   const bottomObstacleHeight = GAME_HEIGHT - OBSTACLE_GAP - obstacleHeight;
 
@@ -58,7 +60,7 @@ function Game() {
       if (!started) {
         setStarted(true);
       }
-      setBirdPosition(pos => pos - JUMP_HEIGHT);
+      setVelocity(JUMP_FORCE);
       createPuff();
     }
   }, [started, isGameOver, createPuff]);
@@ -78,40 +80,49 @@ function Game() {
   }, [handleAction]);
 
   useEffect(() => {
-    let timeId;
+    let frameId;
     if (started && !isGameOver) {
-      if (birdPosition <= 0) {
-        gameOver();
-      }
-      
-      if (birdPosition >= GAME_HEIGHT - BIRD_HEIGHT) {
-        gameOver();
-        return;
-      }
-      
-      const birdLeft = GAME_WIDTH * 0.2;
-      const birdRight = birdLeft + BIRD_WIDTH;
-      
-      if (
-        obstacleLeft < birdRight && 
-        obstacleLeft + OBSTACLE_WIDTH > birdLeft
-      ) {
-        if (
-          birdPosition < obstacleHeight + 5 ||
-          birdPosition + BIRD_HEIGHT > obstacleHeight + OBSTACLE_GAP - 5
-        ) {
-          gameOver();
-        }
-      }
+      const updatePhysics = () => {
+        setBirdPosition(pos => {
+          const newPos = pos + velocity;
+          // Check boundaries
+          if (newPos <= 0 || newPos >= GAME_HEIGHT - BIRD_HEIGHT) {
+            gameOver();
+            return pos;
+          }
 
-      if (birdPosition < GAME_HEIGHT - BIRD_HEIGHT) {
-        timeId = setInterval(() => {
-          setBirdPosition(pos => pos + GRAVITY);
-        }, 24);
-      }
+          // Check pipe collisions
+          const birdLeft = GAME_WIDTH * 0.2;
+          const birdRight = birdLeft + BIRD_WIDTH;
+          
+          if (
+            obstacleLeft < birdRight && 
+            obstacleLeft + OBSTACLE_WIDTH > birdLeft
+          ) {
+            if (
+              newPos < obstacleHeight + 5 ||
+              newPos + BIRD_HEIGHT > obstacleHeight + OBSTACLE_GAP - 5
+            ) {
+              gameOver();
+              return pos;
+            }
+          }
+
+          return newPos;
+        });
+        
+        setVelocity(v => {
+          const newVelocity = Math.min(v + GRAVITY, TERMINAL_VELOCITY);
+          return newVelocity;
+        });
+
+        frameId = requestAnimationFrame(updatePhysics);
+      };
+
+      frameId = requestAnimationFrame(updatePhysics);
     }
-    return () => clearInterval(timeId);
-  }, [birdPosition, started, obstacleLeft]);
+    return () => cancelAnimationFrame(frameId);
+  }, [started, isGameOver, velocity, obstacleLeft, obstacleHeight]);
 
   useEffect(() => {
     let obstacleId;
@@ -143,6 +154,7 @@ function Game() {
   const restartGame = () => {
     setIsGameOver(false);
     setBirdPosition(GAME_HEIGHT / 2 - BIRD_HEIGHT / 2);
+    setVelocity(0);
     setObstacleHeight(200);
     setObstacleLeft(GAME_WIDTH);
     setScore(0);
