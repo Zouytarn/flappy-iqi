@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/flappy-iqi/static/css/main.3b17a86f.css",
+    "main.js": "/flappy-iqi/static/js/main.603787ab.js",
+    "index.html": "/flappy-iqi/index.html",
+    "main.3b17a86f.css.map": "/flappy-iqi/static/css/main.3b17a86f.css.map",
+    "main.603787ab.js.map": "/flappy-iqi/static/js/main.603787ab.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3b17a86f.css",
+    "static/js/main.603787ab.js"
+  ]
+}
