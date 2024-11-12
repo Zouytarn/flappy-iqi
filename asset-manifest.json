@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/flappy-iqi/static/css/main.3b17a86f.css",
-    "main.js": "/flappy-iqi/static/js/main.603787ab.js",
+    "main.js": "/flappy-iqi/static/js/main.e308bbc5.js",
     "index.html": "/flappy-iqi/index.html",
     "main.3b17a86f.css.map": "/flappy-iqi/static/css/main.3b17a86f.css.map",
-    "main.603787ab.js.map": "/flappy-iqi/static/js/main.603787ab.js.map"
+    "main.e308bbc5.js.map": "/flappy-iqi/static/js/main.e308bbc5.js.map"
   },
   "entrypoints": [
     "static/css/main.3b17a86f.css",
-    "static/js/main.603787ab.js"
+    "static/js/main.e308bbc5.js"
   ]
 }
